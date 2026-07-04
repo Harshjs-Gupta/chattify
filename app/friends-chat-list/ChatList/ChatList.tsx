@@ -156,46 +156,64 @@ function ChatList() {
         </div>
       </div>
       <div>
-        {filteredChats.map((chat) => (
-          <div
-            className="flex cursor-pointer items-center justify-between gap-5 border-b border-slate-400 p-5 hover:bg-[rgb(248,185,134)]"
-            key={chat.chatId}
-            onClick={() => handleSelect(chat.chatId)}
-            style={{
-              backgroundColor: chat.chatId ? "#6935C61f" : "transparent",
-            }}
-          >
-            <div className="flex items-center justify-center gap-5">
-              <Image
-                src={
-                  chat.user.blocked.includes(currentUser.id)
-                    ? avatar
-                    : chat.user.avatar || avatar
-                }
-                alt="DP"
-                width={100}
-                height={100}
-                className="h-12 w-12 rounded-full object-cover"
-              />
-              <div className="mr-10 flex flex-col">
-                <span className="text-base font-bold">
-                  {chat.user.blocked.includes(currentUser.id)
-                    ? "User"
-                    : chat.user.username}
-                </span>
-                <span className="text-start text-xs font-medium">
-                  {chat.lastMessage.slice(0, 10)}...
-                </span>
+        {chats.length !== 0 ? (
+          filteredChats.map((chat) => (
+            <div
+              className="flex cursor-pointer items-center justify-between gap-5 border-b border-slate-400 p-5 hover:bg-[rgb(248,185,134)]"
+              key={chat.chatId}
+              onClick={() => handleSelect(chat.chatId)}
+              style={{
+                backgroundColor: chat.chatId ? "#6935C61f" : "transparent",
+              }}
+            >
+              <div className="flex items-center justify-center gap-5">
+                <Image
+                  src={
+                    chat.user.blocked.includes(currentUser.id)
+                      ? avatar
+                      : chat.user.avatar || avatar
+                  }
+                  alt="DP"
+                  width={100}
+                  height={100}
+                  className="h-12 w-12 rounded-full object-cover"
+                />
+                <div className="mr-10 flex flex-col">
+                  <span className="text-base font-bold">
+                    {chat.user.blocked.includes(currentUser.id)
+                      ? "User"
+                      : chat.user.username}
+                  </span>
+                  <span className="text-start text-xs font-medium">
+                    {chat.lastMessage.slice(0, 10)}...
+                  </span>
+                </div>
               </div>
+              <span className="text-right text-xs">
+                {new Date(chat.updatedAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
             </div>
-            <span className="text-right text-xs">
-              {new Date(chat.updatedAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+          ))
+        ) : (
+          <div className="text-center w-full h-full space-y-2 mt-10 tex-xl flex flex-col items-center justify-center text-xs font-medium">
+            <span className="font-bold text-2xl md:text-4xl lg:text-5xl">
+              No chats found
             </span>
+            <br />
+            <span className="text-base md:text-xl lg:text-2xl">
+              Search my name "Harsh" or "harsh" to chat with me as a demo chat
+            </span>
+            <br />
+            <span className="text-base md:text-xl lg:text-2xl">
+              Click the + button above to add a new chat
+            </span>
+            <br />
+            <span></span>
           </div>
-        ))}
+        )}
       </div>
       {isOpen && <AddUser setIsOpen={setIsOpen} />}
     </div>
