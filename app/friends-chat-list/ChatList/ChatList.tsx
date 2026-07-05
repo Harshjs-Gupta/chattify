@@ -17,6 +17,8 @@ import { useUserStore } from "@/lib/useStore";
 import { useChatStore } from "@/lib/chatStore";
 import { database } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { EllipsisVertical } from "lucide-react";
+import { toast } from "react-toastify";
 
 interface User {
   id: string;
@@ -36,13 +38,15 @@ interface Chat {
 }
 
 function ChatList() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [input, setInput] = useState<string>("");
-  const router = useRouter();
-  const { currentUser } = useUserStore() as { currentUser: User };
-  const { changeChat } = useChatStore();
+  const [isOpen, setIsOpen] = useState<boolean>(false); // For AddUser modal visibility
+  const [deleteChatOption, setDeleteChatOption] = useState<string | null>(null); // For delete chat popup visibility
+  const [chats, setChats] = useState<Chat[]>([]); // For storing all chats
+  const [input, setInput] = useState<string>(""); // For search input
+  const router = useRouter(); // For routing to different pages
+  const { currentUser } = useUserStore() as { currentUser: User }; // For getting current user
+  const { changeChat } = useChatStore(); // For changing chat
 
+  // UseEffect to fetch all chats
   useEffect(() => {
     if (!currentUser || !currentUser.id) {
       return;
@@ -78,6 +82,7 @@ function ChatList() {
     };
   }, [currentUser]);
 
+  // Handler for selecting a chat
   async function handleSelect(chatId: string) {
     if (!currentUser) return;
 
@@ -117,6 +122,37 @@ function ChatList() {
     }
   }
 
+  // Handler for deleting a chat
+  async function handleDeleteChat(chatId: string) {
+    // Confirmation for deleting the chat
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this chat?",
+    );
+
+    if (!confirmed) {
+      setDeleteChatOption(null);
+      return;
+    }
+    if (!currentUser) return;
+
+    // Get the user chats reference
+    const userChatsRef = doc(database, "userChats", currentUser.id);
+
+    try {
+      alert("You wanted to delete this chat");
+      // Update the user chats reference with the filtered chats
+      await updateDoc(userChatsRef, {
+        chats: chats.filter((chat) => chat.chatId !== chatId),
+      });
+      toast.success("Chat deleted successfully");
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDeleteChatOption(null);
+    }
+  }
+
+  // Filter the chats based on the search input
   const filteredChats = chats.filter((c) =>
     c.user.username.toLowerCase().includes(input.toLowerCase()),
   );
@@ -124,7 +160,9 @@ function ChatList() {
   return (
     <div className="w-full">
       <div className="border-b border-white/10 p-3">
+        {/* Search user and Add User */}
         <div className="flex items-center justify-center gap-5">
+          {/* Search bar for search available user */}
           <div className="flex flex-1 p-2 items-center justify-around gap-5 rounded-[10px] bg-[rgba(17,25,37,0.5)]">
             <Image
               src={search}
@@ -141,6 +179,7 @@ function ChatList() {
               className="flex-1 bg-transparent outline-none"
             />
           </div>
+          {/* Add user button */}
           <div
             onClick={() => setIsOpen((prev) => !prev)}
             className="rounded-[10px] cursor-pointer hover:bg-white/20 bg-[rgba(17,25,37,0.5)] p-[10px]"
@@ -155,17 +194,19 @@ function ChatList() {
           </div>
         </div>
       </div>
+      {/* ChatList of added user */}
       <div>
         {chats.length !== 0 ? (
-          filteredChats.map((chat) => (
+          filteredChats.map((chat, index) => (
             <div
-              className="flex cursor-pointer items-center justify-between gap-5 border-b border-slate-400 p-5 hover:bg-[rgb(248,185,134)]"
+              className="flex cursor-pointer items-center justify-between gap-5 border-b border-slate-400 px-3 py-4 hover:bg-[rgb(248,185,134)]"
               key={chat.chatId}
-              onClick={() => handleSelect(chat.chatId)}
+              // onDoubleClickCapture={() => handleDeleteChat(chat.chatId)}
               style={{
                 backgroundColor: chat.chatId ? "#6935C61f" : "transparent",
               }}
             >
+              {/*  */}
               <div className="flex items-center justify-center gap-5">
                 <Image
                   src={
@@ -176,10 +217,14 @@ function ChatList() {
                   alt="DP"
                   width={100}
                   height={100}
+                  onClick={() => handleSelect(chat.chatId)}
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div className="mr-10 flex flex-col">
-                  <span className="text-base font-bold">
+                  <span
+                    className="text-base font-bold"
+                    onClick={() => handleSelect(chat.chatId)}
+                  >
                     {chat.user.blocked.includes(currentUser.id)
                       ? "User"
                       : chat.user.username}
@@ -190,12 +235,30 @@ function ChatList() {
                   </span>
                 </div>
               </div>
-              <span className="text-right text-xs">
-                {new Date(chat.updatedAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
+              <div className="relative flex gap-2 items-center">
+                <span className="text-right text-xs">
+                  {new Date(chat.updatedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                <EllipsisVertical
+                  size={16}
+                  onClick={() =>
+                    setDeleteChatOption((prev) =>
+                      prev === chat.chatId ? null : chat.chatId,
+                    )
+                  }
+                />
+                {deleteChatOption === chat.chatId && (
+                  <button
+                    className="absolute top-5  w-max text-xs font-semibold hover:bg-[#4b2887] z-10 active:bg-[#6935C69f] cursor-pointer py-2 px-1 rounded-sm bg-[#6935C6]"
+                    onClick={() => handleDeleteChat(chat.chatId)}
+                  >
+                    Clear Chat
+                  </button>
+                )}
+              </div>
             </div>
           ))
         ) : (
