@@ -13,6 +13,32 @@ export default function LandingPage() {
 
       {/* Scattered dots */}
       <ScatteredDots right_left="left" top_bottom="top" />
+      {/* <div className="pointer-events-none absolute inset-0 hidden sm:block">
+        <span
+          className={`absolute left-[60%] top-[20%] h-2 w-2 rounded-full bg-violet-400/70`}
+        />
+        <span
+          className={`absolute left-[81%] top-[18%] h-2 w-2 rounded-full bg-violet-300/60`}
+        />
+        <span
+          className={`absolute left-[91%] top-[17%] h-2.5 w-2.5 rounded-full bg-violet-400/80`}
+        />
+        <span
+          className={`absolute left-[51%] top-[57%] h-1.5 w-1.5 rounded-full bg-violet-400/60`}
+        />
+        <span
+          className={`absolute left-[95%] top-[55%] h-1.5 w-1.5 rounded-full bg-violet-300/50`}
+        />
+        <span
+          className={`absolute left-[56%] top-[67%] h-1.5 w-1.5 rounded-full bg-violet-400/50`}
+        />
+        <span
+          className={`absolute left-[88%] top-[68%] h-2 w-2 rounded-full bg-violet-300/70`}
+        />
+        <span
+          className={`absolute left-[84%] top-[10%] h-1 w-1 rounded-full bg-violet-300/50`}
+        />
+      </div> */}
 
       <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 pb-16 pt-8 sm:px-10 lg:px-16">
         {/* Logo */}
