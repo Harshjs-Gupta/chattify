@@ -87,6 +87,9 @@ function AddUser({ setIsOpen }: { setIsOpen: (prev: boolean) => void }) {
       });
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsOpen(false);
+      setUser(null);
     }
   }
 

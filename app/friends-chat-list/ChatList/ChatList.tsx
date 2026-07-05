@@ -185,7 +185,8 @@ function ChatList() {
                       : chat.user.username}
                   </span>
                   <span className="text-start text-xs font-medium">
-                    {chat.lastMessage.slice(0, 10)}...
+                    {chat.lastMessage.slice(0, 10)}
+                    {chat.lastMessage.length > 10 ? <span>...</span> : null}
                   </span>
                 </div>
               </div>
