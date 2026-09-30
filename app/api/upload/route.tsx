@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       cloudinary.uploader
         .upload_stream(
           {
-            folder: "users",
+            folder: "chattify/users",
             resource_type: "image",
             overwrite: false,
             max_bytes: 2 * 1024 * 1024,
